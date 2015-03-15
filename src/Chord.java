@@ -6,7 +6,8 @@ public class Chord{
     
     Map<Integer, Node> nodeList = new HashMap<Integer, Node>();
 
-    static public void main(){
+    public Chord(){
+    
         //create a node with id=0
         //TODO: initialize finger table and key-value for node 0
         Node n0 = new Node(this, 0);
@@ -17,10 +18,11 @@ public class Chord{
         System.out.println("Starting new thread for Node 0 ... ");
         new Thread(n0).start();
 
-        //keep reading from terminal, parse command
+        //keep reading from terminal, parse command, and execute
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
         try{
+        
             String s;
             while((s = input.readLine())!=null){
 
@@ -43,21 +45,28 @@ public class Chord{
             System.out.println("IO error when reading from terminal.");
             e.printStackTrace(System.err);
         }
+   
     }
-
+    //command class used to parse terminal input
     private class Command{
         CmdType type;
         int p;
         int k;
     }
 
-    public enum CmdType{
-        JOIN,
-        FIND,
-        LEAVE,
-        SHOW,
-        SHOWALL,
-        INVALID
+    //command line type
+    private enum CmdType{
+        JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID
+    }
+
+    static public void main(){
+   
+        System.out.println("Starting Chord...");
+        Chord chord = new Chord();
+    }
+
+    public Node getNode(int id){
+        return nodeList.get(id);
     }
 
     private Command parseCmd(String s){
@@ -71,6 +80,6 @@ public class Chord{
             cmd.type = CmdType.INVALID;
             System.out.println("Can't recognize command!");
         }
-
+        return cmd;
     }
 }
