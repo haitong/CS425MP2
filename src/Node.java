@@ -53,9 +53,6 @@ public class Node implements Runnable{
 		System.out.println(". Done!");
 	}
 
-	public void updateFinger(){
-	}
-
 	public synchronized void addData(Set<Integer> d){
 		data.addAll(d);
 	}
@@ -64,7 +61,7 @@ public class Node implements Runnable{
 		data.add(key);
 	}
 
-	public synchronized Set<Integer> getData(int start, int end){
+	public synchronized SortedSet<Integer> getData(int start, int end){
 		// The start should be the inserted node's ID
 		// End should be the sucessor of the inserted node
 		return data.subSet(start, end);
@@ -138,7 +135,6 @@ public class Node implements Runnable{
 
 	public int closestPrecedingFinger(int id){
 		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
-//			if(finger.get(i).node > index && finger.get(i).node < id)
 			if(withinRange(index,id,finger.get(i).node))
 				return finger.get(i).node;
 		}	
@@ -178,6 +174,26 @@ public class Node implements Runnable{
 			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
 		}
 	}
+	
+	public void updateFingerTableLeave(int nodeID, int fingerID){
+		if(finger.get(fingerID).node == nodeID){
+			finger.get(fingerID).node = chord.getNode(nodeID).getSuccessor();
+			chord.getNode(predecessor).updateFingerTableLeave(nodeID,fingerID);
+		}
+	}
+	
+	public void updateOthersLeave(){
+		int step = 1;
+		int nodeID = 0;
+		int changeID = 0;
+		for(int i=0; i < TOTAL_NUM; i++){
+			changeID = index + 1 - step;
+			if(changeID < 0) changeID += TOTAL_NODE;
+			nodeID = findPredecessor(changeID);
+			chord.getNode(nodeID).updateFingerTableLeave(index,i);
+			step *=2;
+		}
+	}
 
 	public void updateOthers(){
 		int step = 1;
@@ -192,11 +208,49 @@ public class Node implements Runnable{
 		}
 	}
 
+	public void removeData(int start, int end){
+		if(end > start){
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,256));
+			SortedSet<Integer> t2 = new TreeSet<Integer>(getData(0,start));
+			data.clear();
+			data.addAll(t1);
+			data.addAll(t2);
+		}
+		else{
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,start));
+			data.clear();
+			data.addAll(t1);
+		}
+	}
+
+	public void moveData(){
+		Node pre = chord.getNode(predecessor);
+		if(index > finger.get(0).node){
+			SortedSet<Integer> moved1 = pre.getData(index, 256);
+			SortedSet<Integer> moved2 = pre.getData(0, finger.get(0).node);
+			addData(moved1);
+			addData(moved2);
+		}
+		else{
+			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
+			addData(moved);
+		}
+		pre.removeData(index, finger.get(0).node);
+	}
+
 	public void join(){
 		// we always use node 0 as the starting node
 		initFingerTable();
 		updateOthers();
+		moveData();
 	}
+
+
+	public void leave(){
+		updateOthersLeave();
+	}	
+
+
 
 	@Override
 	public void run(){
