@@ -59,7 +59,7 @@ public class Chord{
         JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID
     }
 
-    static public void main(){
+    public static void main(String[] args){
    
         System.out.println("Starting Chord...");
         Chord chord = new Chord();
