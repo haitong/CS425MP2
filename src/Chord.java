@@ -17,6 +17,10 @@ public class Chord{
         //start thread for node 0
         System.out.println("Starting new thread for Node 0 ... ");
         new Thread(n0).start();
+        //initialize keys in node 0
+        for(int i=0; i<=255; i++){
+            n0.addData(i);
+        }
 
         //keep reading from terminal, parse command, and execute
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -29,12 +33,21 @@ public class Chord{
                 Command cmd = parseCmd(s);
                 switch(cmd.type){
                     case JOIN:{
+                        //reject "join" if node already exists
+                        if(nodeList.containsKey(cmd.p)){
+                            System.out.println("Node "+cmd.p+" already exists. Reject Command.");
+                            break;
+                        }
                         //create a new thread for the node p
                         Node node = new Node(this, cmd.p);
                         nodeList.put(cmd.p, node);
                         new Thread(node).start();
                         break;
                     } case SHOWFINGER:{
+                        if(!nodeList.containsKey(cmd.p)){
+                            System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            break;
+                        }
                         Node node = getNode(cmd.p);
                         node.showFinger();
                         break;
