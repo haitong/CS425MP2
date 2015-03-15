@@ -135,7 +135,6 @@ public class Node implements Runnable{
 
 	public int closestPrecedingFinger(int id){
 		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
-//			if(finger.get(i).node > index && finger.get(i).node < id)
 			if(withinRange(index,id,finger.get(i).node))
 				return finger.get(i).node;
 		}	
@@ -173,6 +172,26 @@ public class Node implements Runnable{
 		if(withinRange(index,finger.get(fingerID).node,nodeID)){
 			finger.get(fingerID).node = nodeID;
 			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
+		}
+	}
+	
+	public void updateFingerTableLeave(int nodeID, int fingerID){
+		if(finger.get(fingerID).node == nodeID){
+			finger.get(fingerID).node = chord.getNode(nodeID).getSuccessor();
+			chord.getNode(predecessor).updateFingerTableLeave(nodeID,fingerID);
+		}
+	}
+	
+	public void updateOthersLeave(){
+		int step = 1;
+		int nodeID = 0;
+		int changeID = 0;
+		for(int i=0; i < TOTAL_NUM; i++){
+			changeID = index + 1 - step;
+			if(changeID < 0) changeID += TOTAL_NODE;
+			nodeID = findPredecessor(changeID);
+			chord.getNode(nodeID).updateFingerTableLeave(index,i);
+			step *=2;
 		}
 	}
 
@@ -225,6 +244,13 @@ public class Node implements Runnable{
 		updateOthers();
 		moveData();
 	}
+
+
+	public void leave(){
+		updateOthersLeave();
+	}	
+
+
 
 	@Override
 	public void run(){
