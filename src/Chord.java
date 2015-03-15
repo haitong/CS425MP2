@@ -37,6 +37,7 @@ public class Chord{
                     } case SHOWFINGER:{
                         Node node = getNode(cmd.p);
                         node.showFinger();
+                        break;
                     }
                     default:
                         System.out.println("Please input valid command.");
