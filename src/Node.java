@@ -89,8 +89,8 @@ public class Node implements Runnable{
 
 	public int closestPrecedingFinger(int id){
 		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
-			if(finger[i].node > index && finger[i].node < id)
-				return finger[i].node;
+			if(finger.get(i).node > index && finger.get(i).node < id)
+				return finger.get(i).node;
 		}	
 		return index;
 	}
@@ -121,6 +121,8 @@ public class Node implements Runnable{
 		}
 	}
 
+	public void updateOthers(){
+	}
 
 	public void join(){
 		// we always use node 0 as the starting node
