@@ -147,11 +147,11 @@ public class Node implements Runnable{
 			else{
 				int ID = chord.getNode(0).findSuccessor(finger.get(i+1).start);
 				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
-				if(withinRangeeE(index,0,ID)){
-					finger.get(i+1).node = index;
+				if(withinRangeEe(finger.get(i+1).start, index, ID)){
+					finger.get(i+1).node = ID;
 				}
 				else{
-					finger.get(i+1).node = ID % TOTAL_NODE;
+					finger.get(i+1).node = index;
 				}
 			}
 		}
