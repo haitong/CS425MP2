@@ -80,6 +80,6 @@ public class Chord{
             cmd.type = CmdType.INVALID;
             System.out.println("Can't recognize command!");
         }
-
+        return cmd;
     }
 }
