@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Chord{
     
-    Map<Integer, Node> nodeList = new TreeMap<Integer, Node>();
+    TreeMap<Integer, Node> nodeList = new TreeMap<Integer, Node>();
 
     public Chord(){
     
@@ -60,9 +60,10 @@ public class Chord{
                         node.printKey();
                         break;
                     } case SHOWALL : {
-                        for(Map.Entry e : nodeList){
-                            e.getValue().printKey();
+                        for(int i : nodeList.keySet()){
+                            getNode(i).printKey();
                         }
+                        break;
                     }
                     default:
                         System.out.println("Please input valid command.");
