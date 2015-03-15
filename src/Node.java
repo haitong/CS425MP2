@@ -36,9 +36,9 @@ public class Node implements Runnable{
 		int jump = 1;
 		for(int i=0; i < TOTAL_NUM; i++){
 			fingerEntry f = new fingerEntry();
-			f.start = id + jump;
+			f.start = (id + jump) % TOTAL_NODE;
 			jump *= 2;
-			f.end = id + jump - 1;
+			f.end = (id + jump) % TOTAL_NODE;
 			finger.add(f);
 		}
 		predecessor = 0;
@@ -115,6 +115,13 @@ public class Node implements Runnable{
 		return curr;
 	}
 
+	public void showFinger(){
+		for(int i=0; i < TOTAL_NUM; i++){
+			System.out.println("finger " + i + " : start=>" + finger.get(i).start 
+			+ ", end=>" + finger.get(i).end + ", node=>" + finger.get(i).node );
+		}
+	}
+
 	public int closestPrecedingFinger(int id){
 		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
 //			if(finger.get(i).node > index && finger.get(i).node < id)
@@ -129,21 +136,26 @@ public class Node implements Runnable{
 		Node successor = chord.getNode(finger.get(0).node);
 		predecessor = successor.getPredecessor();
 		successor.setPredecessor(index);
-		System.out.println("Initializing finger table");
+		System.out.println("Initializing finger table for node " + index);
 		
-		for(int i=0; i < TOTAL_NUM-2; i++){
+		for(int i=0; i < TOTAL_NUM-1; i++){
+			System.out.println("Index = " + index + ", ith " + i + " node = " + finger.get(i).node
+			+ ", start = " + finger.get(i+1).start);
 			if(withinRangeEe(index,finger.get(i).node,finger.get(i+1).start)){
-				finger.get(i+1).node = finger.get(i).node;
+				finger.get(i+1).node = finger.get(i).node % TOTAL_NODE;
 			}
 			else{
-				finger.get(i+1).node = chord.getNode(0).findSuccessor(finger.get(i+1).start);
+				int ID = chord.getNode(0).findSuccessor(finger.get(i+1).start);
+				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
+				if(withinRangeeE(index,0,ID)){
+					finger.get(i+1).node = index;
+				}
+				else{
+					finger.get(i+1).node = ID % TOTAL_NODE;
+				}
 			}
 		}
-		
-		for(int i=0; i < TOTAL_NUM; i++){
-			System.out.println("finger " + i + " : start=>" + finger.get(i).start 
-			+ "end=>" + finger.get(i).end + " node=>" + finger.get(i).node );
-		}
+		showFinger();
 	}
 
 	public void updateFingerTable(int nodeID, int fingerID){
