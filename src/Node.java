@@ -53,9 +53,6 @@ public class Node implements Runnable{
 		System.out.println(". Done!");
 	}
 
-	public void updateFinger(){
-	}
-
 	public synchronized void addData(Set<Integer> d){
 		data.addAll(d);
 	}
@@ -64,7 +61,7 @@ public class Node implements Runnable{
 		data.add(key);
 	}
 
-	public synchronized Set<Integer> getData(int start, int end){
+	public synchronized SortedSet<Integer> getData(int start, int end){
 		// The start should be the inserted node's ID
 		// End should be the sucessor of the inserted node
 		return data.subSet(start, end);
@@ -192,10 +189,41 @@ public class Node implements Runnable{
 		}
 	}
 
+	public void removeData(int start, int end){
+		if(end > start){
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,256));
+			SortedSet<Integer> t2 = new TreeSet<Integer>(getData(0,start));
+			data.clear();
+			data.addAll(t1);
+			data.addAll(t2);
+		}
+		else{
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,start));
+			data.clear();
+			data.addAll(t1);
+		}
+	}
+
+	public void moveData(){
+		Node pre = chord.getNode(predecessor);
+		if(index > finger.get(0).node){
+			SortedSet<Integer> moved1 = pre.getData(index, 256);
+			SortedSet<Integer> moved2 = pre.getData(0, finger.get(0).node);
+			addData(moved1);
+			addData(moved2);
+		}
+		else{
+			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
+			addData(moved);
+		}
+		pre.removeData(index, finger.get(0).node);
+	}
+
 	public void join(){
 		// we always use node 0 as the starting node
 		initFingerTable();
 		updateOthers();
+		moveData();
 	}
 
 	@Override
