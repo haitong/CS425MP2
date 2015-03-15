@@ -34,6 +34,9 @@ public class Chord{
                         nodeList.put(cmd.p, node);
                         new Thread(node).start();
                         break;
+                    } case SHOWFINGER:{
+                        Node node = getNode(cmd.p);
+                        node.showFinger();
                     }
                     default:
                         System.out.println("Please input valid command.");
@@ -56,7 +59,7 @@ public class Chord{
 
     //command line type
     private enum CmdType{
-        JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID
+        JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID, SHOWFINGER
     }
 
     public static void main(String[] args){
@@ -76,7 +79,15 @@ public class Chord{
         if(str[0].equalsIgnoreCase("join")){
             cmd.type = CmdType.JOIN;
             cmd.p = Integer.parseInt(str[1]);
-        } else{
+        } else if(str[0].equalsIgnoreCase("show") && str[1].equalsIgnoreCase("all")){
+            cmd.type = CmdType.SHOWALL;
+        } else if(str[0].equalsIgnoreCase("show") && !str[1].equalsIgnoreCase("all")){
+            cmd.type = CmdType.SHOW;
+            cmd.p = Integer.parseInt(str[1]);
+        } else if(str[0].equalsIgnoreCase("showfinger")){
+            cmd.type = CmdType.SHOWFINGER;
+            cmd.p = Integer.parseInt(str[1]);
+        }else{
             cmd.type = CmdType.INVALID;
             System.out.println("Can't recognize command!");
         }
