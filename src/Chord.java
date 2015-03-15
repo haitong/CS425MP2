@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Chord{
     
-    Map<Integer, Node> nodeList = new HashMap<Integer, Node>();
+    Map<Integer, Node> nodeList = new TreeMap<Integer, Node>();
 
     public Chord(){
     
@@ -51,6 +51,18 @@ public class Chord{
                         Node node = getNode(cmd.p);
                         node.showFinger();
                         break;
+                    } case SHOW: {
+                        if(!nodeList.containsKey(cmd.p)){
+                            System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            break;
+                        }
+                        Node node = getNode(cmd.p);
+                        node.printKey();
+                        break;
+                    } case SHOWALL : {
+                        for(Map.Entry e : nodeList){
+                            e.getValue().printKey();
+                        }
                     }
                     default:
                         System.out.println("Please input valid command.");
