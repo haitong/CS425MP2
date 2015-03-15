@@ -15,6 +15,7 @@ public class Node implements Runnable{
 	private int index;
 	private Chord chord;
 	public static final int TOTAL_NUM = 8;
+	public static final int TOTAL_NODE = 256;
 
 	public class fingerEntry{
 		int start;
@@ -57,7 +58,7 @@ public class Node implements Runnable{
 
 	public int findSuccessor(int id){
 		int successor = findPredecessor(id);
-		return successor;	
+		return chord.getNode(successor).getSuccessor();	
 	}
 
 	public int getSuccessor(){
@@ -71,7 +72,7 @@ public class Node implements Runnable{
 	public void setPredecessor(int id){
 		predecessor = id;
 	}
-
+	
 	public boolean withinRange(int id1, int id2, int id){
 		if(id1 < id2){
 			if(id > id1 && id < id2) return true;
@@ -81,27 +82,17 @@ public class Node implements Runnable{
 		}
 		return false;
 	}
-	
-	public int findPredecessor(int id){
-		if(predecessor == index)
-		return index;
-		
-		int curr = index;
 
-		while(!withinRange(curr,chord.getNode(curr).getSuccessor(), id)){
-			curr = chord.getNode(curr).closestPrecedingFinger(id);
+	public boolean withinRangeeE(int id1, int id2, int id){
+		if(id1 < id2){
+			if(id > id1 && id <= id2) return true;
 		}
-		return curr;
+		else{
+			if (id > id1 || id <= id2) return true;
+		}
+		return false;
 	}
-
-	public int closestPrecedingFinger(int id){
-		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
-			if(finger.get(i).node > index && finger.get(i).node < id)
-				return finger.get(i).node;
-		}	
-		return index;
-	}
-
+	
 	public boolean withinRangeEe(int id1, int id2, int id){
 		if(id1 < id2){
 			if(id >= id1 && id < id2) return true;
@@ -110,6 +101,27 @@ public class Node implements Runnable{
 			if (id >= id1 || id < id2) return true;
 		}
 		return false;
+	}
+
+	public int findPredecessor(int id){
+		if(predecessor == index)
+		return index;
+		
+		int curr = index;
+
+		while(!withinRangeeE(curr,chord.getNode(curr).getSuccessor(), id)){
+			curr = chord.getNode(curr).closestPrecedingFinger(id);
+		}
+		return curr;
+	}
+
+	public int closestPrecedingFinger(int id){
+		for(int i = TOTAL_NUM - 1; i >= 0; i-- ){
+//			if(finger.get(i).node > index && finger.get(i).node < id)
+			if(withinRange(index,id,finger.get(i).node))
+				return finger.get(i).node;
+		}	
+		return index;
 	}
 
 	public void initFingerTable(){
@@ -134,7 +146,24 @@ public class Node implements Runnable{
 		}
 	}
 
+	public void updateFingerTable(int nodeID, int fingerID){
+		if(withinRange(index,finger.get(fingerID).node,nodeID)){
+			finger.get(fingerID).node = nodeID;
+			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
+		}
+	}
+
 	public void updateOthers(){
+		int step = 1;
+		int nodeID = 0;
+		int changeID = 0;
+		for(int i=0; i < TOTAL_NUM; i++){
+			changeID = index + 1 - step;
+			if(changeID < 0) changeID += TOTAL_NODE;
+			nodeID = findPredecessor(changeID);
+			chord.getNode(nodeID).updateFingerTable(index,i);
+			step *=2;
+		}
 	}
 
 	public void join(){
@@ -152,16 +181,6 @@ public class Node implements Runnable{
 		while(true);
 	}
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
