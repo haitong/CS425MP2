@@ -24,7 +24,8 @@ public class Node implements Runnable{
 			start = 0;
 			end = 0;
 			node = 0;
-		}	
+		}
+
 	}
 
 
@@ -39,6 +40,7 @@ public class Node implements Runnable{
 			f.end = id + jump - 1;
 			finger.add(f);
 		}
+		predecessor = 0;
 	}
 
 
@@ -54,9 +56,14 @@ public class Node implements Runnable{
 	}
 
 	public int findSuccessor(int id){
-		return finger.get(0).node;	
+		int successor = findPredecessor(id);
+		return successor;	
 	}
 
+	public int getSuccessor(){
+		return finger.get(0).node;	
+	}
+	
 	public int getPredecessor(){
 		return predecessor;
 	}
@@ -110,6 +117,7 @@ public class Node implements Runnable{
 		Node successor = chord.getNode(finger.get(0).node);
 		predecessor = successor.getPredecessor();
 		successor.setPredecessor(index);
+		System.out.println("Initializing finger table");
 		
 		for(int i=0; i < TOTAL_NUM-2; i++){
 			if(withinRangeEe(index,finger.get(i).node,finger.get(i+1).start)){
@@ -118,6 +126,11 @@ public class Node implements Runnable{
 			else{
 				finger.get(i+1).node = chord.getNode(0).findSuccessor(finger.get(i+1).start);
 			}
+		}
+		
+		for(int i=0; i < TOTAL_NUM; i++){
+			System.out.println("finger " + i + " : start=>" + finger.get(i).start 
+			+ "end=>" + finger.get(i).end + " node=>" + finger.get(i).node );
 		}
 	}
 
@@ -132,6 +145,11 @@ public class Node implements Runnable{
 
 	@Override
 	public void run(){
+		if(index != 0){
+			System.out.println("Node " + index + " is running");
+			join();
+		}
+		while(true);
 	}
 }
 
