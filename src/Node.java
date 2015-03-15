@@ -7,7 +7,7 @@ import java.text.*;
 
 public class Node implements Runnable{
 
-	private Map<Integer, Integer> data = new HashMap<Integer,Integer>();
+	private TreeSet<Integer> data = new TreeSet<Integer>();
 
 	private List<fingerEntry> finger = new ArrayList<fingerEntry>();
 
@@ -45,15 +45,29 @@ public class Node implements Runnable{
 	}
 
 
-	public void updateFinger(){
-	}
-	
-	public synchronized void addData(int key, int value){
-		data.put(key,value);
+	public void printKey(){
+		System.out.print("Keys in node " + index + ": ");
+		for(Integer e : data){
+			System.out.print(e + ", ");
+		}
+		System.out.println(". Done!");
 	}
 
-	public synchronized int getData(int key){
-		return data.get(key);
+	public void updateFinger(){
+	}
+
+	public synchronized void addData(Set<Integer> d){
+		data.addAll(d);
+	}
+
+	public synchronized void addData(int key){
+		data.add(key);
+	}
+
+	public synchronized Set<Integer> getData(int start, int end){
+		// The start should be the inserted node's ID
+		// End should be the sucessor of the inserted node
+		return data.subSet(start, end);
 	}
 
 	public int findSuccessor(int id){
