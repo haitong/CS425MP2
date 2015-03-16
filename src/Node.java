@@ -193,6 +193,7 @@ public class Node implements Runnable{
 			chord.getNode(nodeID).updateFingerTableLeave(index,i);
 			step *=2;
 		}
+		chord.getNode(finger.get(0).node).setPredecessor(predecessor);
 	}
 
 	public void updateOthers(){
@@ -248,6 +249,7 @@ public class Node implements Runnable{
 
 	public void leave(){
 		updateOthersLeave();
+		chord.getNode(predecessor).addData(data);
 	}	
 
 
