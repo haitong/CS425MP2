@@ -7,6 +7,8 @@ public class Chord{
     TreeMap<Integer, Node> nodeList = new TreeMap<Integer, Node>();
     Map<Integer, Thread> threadList = new HashMap<Integer, Thread>();
 
+    int messageCount = 0;
+
     public Chord(){
     
         //create a node with id=0
@@ -35,6 +37,8 @@ public class Chord{
             while((s = input.readLine())!=null){
 
                 Command cmd = parseCmd(s);
+                //reset meesage count before execute command
+                messageCount = 0;
                 switch(cmd.type){
                     case JOIN:{
                         //reject "join" if node already exists
@@ -85,6 +89,14 @@ public class Chord{
                         nodeList.remove(cmd.p);
                         //TODO: stop thread
                         //threadList.get(cmd.p).kill();
+                        break;
+                    } case FIND: {
+                         if(!nodeList.containsKey(cmd.p)){
+                            System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            break;
+                        }
+                        Node node = getNode(cmd.p);
+                        node.find(cmd.k);
                         break;
                     }
                     default:
@@ -148,5 +160,9 @@ public class Chord{
             System.out.println("Can't recognize command!");
         }
         return cmd;
+    }
+
+    public void incrementCount(){
+        messageCount ++;
     }
 }
