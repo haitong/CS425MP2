@@ -164,6 +164,7 @@ public class Node implements Runnable{
 			chord.incrementCount();
 			curr = chord.getNode(curr).closestPrecedingFinger(id);
 		}
+		chord.incrementCount();
 		return curr;
 	}
 
@@ -251,6 +252,7 @@ public class Node implements Runnable{
 			changeID = index + 1 - step;
 			if(changeID < 0) changeID += TOTAL_NODE;
 			nodeID = findPredecessor(changeID);
+			chord.incrementCount();
 			chord.getNode(nodeID).updateFingerTable(index,i);
 			step *=2;
 		}
@@ -274,12 +276,14 @@ public class Node implements Runnable{
 	public synchronized void moveData(){
 		Node pre = chord.getNode(predecessor);
 		if(index > finger.get(0).node){
+			chord.incrementCount();
 			SortedSet<Integer> moved1 = pre.getData(index, 256);
 			SortedSet<Integer> moved2 = pre.getData(0, finger.get(0).node);
 			addData(moved1);
 			addData(moved2);
 		}
 		else{
+			chord.incrementCount();
 			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
 			addData(moved);
 		}
