@@ -188,16 +188,18 @@ public class Node implements Runnable{
 		chord.incrementCount();
 		Node successor = chord.getNode(finger.get(0).node);
 		predecessor = successor.getPredecessor();
+		chord.incrementCount();
 		successor.setPredecessor(index);
-		System.out.println("Initializing finger table for node " + index);
+//		System.out.println("Initializing finger table for node " + index);
 		
 		for(int i=0; i < TOTAL_NUM-1; i++){
-			System.out.println("Index = " + index + ", ith " + i + " node = " + finger.get(i).node
-			+ ", start = " + finger.get(i+1).start);
+//			System.out.println("Index = " + index + ", ith " + i + " node = " + finger.get(i).node
+//			+ ", start = " + finger.get(i+1).start);
 			if(withinRangeEe(index,finger.get(i).node,finger.get(i+1).start)){
 				finger.get(i+1).node = finger.get(i).node % TOTAL_NODE;
 			}
 			else{
+				chord.incrementCount();
 				int ID = chord.getNode(0).findSuccessor(finger.get(i+1).start);
 //				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
 				if(withinRangeEe(finger.get(i+1).start, index, ID)){
@@ -208,7 +210,7 @@ public class Node implements Runnable{
 				}
 			}
 		}
-		showFinger();
+//		showFinger();
 	}
 
 	public void updateFingerTable(int nodeID, int fingerID){
@@ -318,7 +320,7 @@ public class Node implements Runnable{
 	@Override
 	public void run(){
 		if(index != 0){
-			System.out.println("Node " + index + " is running");
+//			System.out.println("Node " + index + " is running");
 			join();
 		}
 		while(true);

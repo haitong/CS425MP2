@@ -172,7 +172,7 @@ public class Chord{
 
                 if(cmd.type==CmdType.JOIN || cmd.type==CmdType.FIND){
                     while(readComplete() == false) ;
-
+/*
                     //After execution, print out the count
                     if(cmd.type==CmdType.JOIN){
                         System.out.print("Join ");
@@ -180,7 +180,8 @@ public class Chord{
                         System.out.print("Find " + cmd.p + " " + cmd.k + " ");
                     }
                     System.out.println("Message Count = " + readCount());
-                }
+*/
+				}
                 //update stat
                 if(cmd.type==CmdType.JOIN){
                     stat.join_cmd ++;
