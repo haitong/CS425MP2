@@ -251,7 +251,7 @@ public class Node implements Runnable{
 		}
 	}
 
-	public void removeData(int start, int end){
+	public synchronized void removeData(int start, int end){
 		if(end > start){
 			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,256));
 			SortedSet<Integer> t2 = new TreeSet<Integer>(getData(0,start));
@@ -266,7 +266,7 @@ public class Node implements Runnable{
 		}
 	}
 
-	public void moveData(){
+	public synchronized void moveData(){
 		Node pre = chord.getNode(predecessor);
 		if(index > finger.get(0).node){
 			SortedSet<Integer> moved1 = pre.getData(index, 256);
