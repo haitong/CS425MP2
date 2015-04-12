@@ -31,7 +31,7 @@ public class Chord{
 
     public void setOutput(String s){
         try{
-            res_output = new BufferedWriter(new FileWriter(s));
+            res_output = new BufferedWriter(new FileWriter(s, true));
         }catch(IOException e){
             System.out.println(e);
         }
@@ -149,6 +149,7 @@ public class Chord{
                             res_output.newLine();
                             s = new String(stat.find_cmd+" "+stat.find_message);
                             res_output.write(s, 0, s.length());
+                            res_output.newLine();
                             res_output.flush();
                             res_output.close();
                         }
@@ -159,7 +160,7 @@ public class Chord{
                         break;
                 }
 
-                while(completeSignal == false) ;
+                //while(completeSignal == false) ;
 
                 //After execution, print out the count
                 System.out.println("Message Count = " + messageCount);

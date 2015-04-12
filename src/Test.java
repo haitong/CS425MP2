@@ -11,14 +11,22 @@ public class Test{
                    // >= 64
     String res_file_name;//output result to the file
 
-    public Test(int P, int F, String res_file_name, int id) throws IOException{
+    public Test(int P, int F, String res_name, int id) throws IOException{
 
         this.P = P;
         this.F = F;
-        this.res_file_name = res_file_name+"."+id;
+        this.res_file_name = res_name+"."+id+".output";
 
-        String input_file_name = res_file_name+".input";
+        String input_file_name = res_name+"."+id+".input";
 
+        BufferedWriter output_file = new BufferedWriter(new FileWriter(this.res_file_name));
+        String s = new String("Stat "+id+":");
+        output_file.write(s, 0, s.length());
+        output_file.newLine();
+        output_file.flush();
+        output_file.close();
+
+ 
         BufferedWriter input_file = new BufferedWriter(new FileWriter(input_file_name));
 
         //join P nodes to chord
@@ -57,14 +65,7 @@ public class Test{
         input_file.flush();
         input_file.close();
 
-        BufferedWriter output_file = new BufferedWriter(new FileWriter(res_file_name));
-        String s = new String("Stat "+id+":");
-        output_file.write(s, 0, s.length());
-        output_file.newLine();
-        output_file.flush();
-        output_file.close();
-
-        new Chord(input_file_name, res_file_name);
+       new Chord(input_file_name, this.res_file_name);
 
     }
 
@@ -78,6 +79,9 @@ public class Test{
         } catch (IOException e){
             System.out.println(e);
         }
+
+        System.out.println("Done!");
+        System.exit(0);
     }
 
 }
