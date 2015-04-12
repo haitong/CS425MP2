@@ -108,6 +108,7 @@ public class Node implements Runnable{
 
 	public int findSuccessor(int id){
 		int successor = findPredecessor(id);
+		chord.incrementCount();
 		return chord.getNode(successor).getSuccessor();	
 	}
 
