@@ -177,7 +177,7 @@ public class Chord{
                     if(cmd.type==CmdType.JOIN){
                         System.out.print("Join ");
                     }else{
-                        System.out.print("Find ");
+                        System.out.print("Find " + cmd.p + " " + cmd.k + " ");
                     }
                     System.out.println("Message Count = " + readCount());
                 }
