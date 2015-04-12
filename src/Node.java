@@ -29,6 +29,37 @@ public class Node implements Runnable{
 
 	}
 
+	// check if key exists in any of the replicas
+	public int find(int key){
+		chord.incrementCount();
+		// if it exists in current replica
+		if(data.contains(key)){
+		// The node needs to return the index of current replica, which is 1 message
+			chord.incrementCount();
+			return index;
+		}
+		// Check if the key should be stored in current node
+		if(index == finger.get(0).node || withinRangeEe(index,finger.get(0).node,key)){
+			// key does not exists
+			return -1;
+		}
+		// Otherwise, need to query other nodes for the key
+		// query 2-6 fingers
+		boolean success = false;
+		int result = -1;
+		for(int i=1; i < 6; i++){
+			if(withinRangeEe(finger.get(i).node, finger.get(i+1).node, key)){
+				success = true;
+				result = chord.getNode(finger.get(i).node).find(key);
+			}
+		}
+
+		// If none of the 2-6 fingers success, query the 7th finger
+		if(!success){
+			result = chord.getNode(finger.get(6).node).find(key);
+		}
+		return result;
+	}
 
 	public Node(Chord c, int id){
 		chord = c;
