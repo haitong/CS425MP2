@@ -10,6 +10,8 @@ public class Chord{
     BufferedWriter res_output = null;
     Stat stat = new Stat();
     boolean completeSignal = false;
+    Object completeLock = new Object();
+    Object countLock = new Object();
 
     public class Stat{
         int join_cmd=0;
@@ -79,12 +81,15 @@ public class Chord{
                 setComplete(false);
                 Command cmd = parseCmd(s);
                 //reset meesage count before execute command
-                messageCount = 0;
+                synchronized(countLock){
+                    messageCount = 0;
+                }
                 switch(cmd.type){
                     case JOIN:{
                         //reject "join" if node already exists
                         if(nodeList.containsKey(cmd.p)){
                             System.out.println("Node "+cmd.p+" already exists. Reject Command.");
+                            setComplete(true);
                             break;
                         }
                         //create a new thread for the node p
@@ -99,6 +104,7 @@ public class Chord{
                         //check the node exists or not
                         if(!nodeList.containsKey(cmd.p)){
                             System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            setComplete(true);
                             break;
                         }
                         Node node = getNode(cmd.p);
@@ -108,6 +114,7 @@ public class Chord{
                         //show keys exist in specified node
                         if(!nodeList.containsKey(cmd.p)){
                             System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            setComplete(true);
                             break;
                         }
                         Node node = getNode(cmd.p);
@@ -122,6 +129,7 @@ public class Chord{
                     } case LEAVE: {
                          if(!nodeList.containsKey(cmd.p)){
                             System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            setComplete(true);
                             break;
                         }
                         Node node = getNode(cmd.p);
@@ -134,6 +142,7 @@ public class Chord{
                     } case FIND: {
                          if(!nodeList.containsKey(cmd.p)){
                             System.out.println("Node "+cmd.p+" doesn't exist. Reject Command.");
+                            setComplete(true);
                             break;
                         }
                         Node node = getNode(cmd.p);
@@ -157,20 +166,28 @@ public class Chord{
                     }
                     default:
                         System.out.println("Please input valid command.");
+                        setComplete(true);
                         break;
                 }
 
-                //while(completeSignal == false) ;
+                if(cmd.type==CmdType.JOIN || cmd.type==CmdType.FIND){
+                    while(readComplete() == false) ;
 
-                //After execution, print out the count
-                System.out.println("Message Count = " + messageCount);
+                    //After execution, print out the count
+                    if(cmd.type==CmdType.JOIN){
+                        System.out.print("Join ");
+                    }else{
+                        System.out.print("Find ");
+                    }
+                    System.out.println("Message Count = " + readCount());
+                }
                 //update stat
                 if(cmd.type==CmdType.JOIN){
                     stat.join_cmd ++;
-                    stat.join_message += messageCount;
+                    stat.join_message += readCount();
                 } else if(cmd.type==CmdType.FIND){
                     stat.find_cmd ++;
-                    stat.find_message += messageCount;
+                    stat.find_message += readCount();
                 }
             }
 
@@ -233,11 +250,28 @@ public class Chord{
         return cmd;
     }
 
-    public synchronized void incrementCount(){
-        messageCount ++;
+    public void incrementCount(){
+        synchronized(countLock){
+            messageCount ++;
+        }
     }
 
-    public synchronized void setComplete(boolean b){
-        completeSignal = b;
+    public int readCount(){
+        synchronized(completeLock){
+            return messageCount;
+        }
     }
+
+    public void setComplete(boolean b){
+        synchronized(completeLock){
+            completeSignal = b;
+        }
+    }
+
+    public boolean readComplete(){
+        synchronized(completeLock){
+            return completeSignal;
+        }
+    }
+
 }
