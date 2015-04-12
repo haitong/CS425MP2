@@ -162,7 +162,7 @@ public class Chord{
                             res_output.flush();
                             res_output.close();
                         }
-                        return;
+                        System.exit(0);
                     }
                     default:
                         System.out.println("Please input valid command.");
