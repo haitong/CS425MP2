@@ -11,11 +11,11 @@ public class Test{
                    // >= 64
     String res_file_name;//output result to the file
 
-    public Test(int P, int F, String res_file_name) throws IOException{
+    public Test(int P, int F, String res_file_name, int id) throws IOException{
 
         this.P = P;
         this.F = F;
-        this.res_file_name = res_file_name;
+        this.res_file_name = res_file_name+"."+id;
 
         String input_file_name = res_file_name+".input";
 
@@ -57,6 +57,13 @@ public class Test{
         input_file.flush();
         input_file.close();
 
+        BufferedWriter output_file = new BufferedWriter(new FileWriter(res_file_name));
+        String s = new String("Stat "+id+":");
+        output_file.write(s, 0, s.length());
+        output_file.newLine();
+        output_file.flush();
+        output_file.close();
+
         new Chord(input_file_name, res_file_name);
 
     }
@@ -64,8 +71,10 @@ public class Test{
     public static void main(String[] args){
 
         try{
-        Test test = new Test(Integer.parseInt(args[0]),
-                Integer.parseInt(args[1]), args[2]);
+            for(int i=0; i<Integer.parseInt(args[3]); i++){
+                Test test = new Test(Integer.parseInt(args[0]),
+                    Integer.parseInt(args[1]), args[2], i);
+            }
         } catch (IOException e){
             System.out.println(e);
         }

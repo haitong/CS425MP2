@@ -9,6 +9,7 @@ public class Chord{
     BufferedReader input = null;
     BufferedWriter res_output = null;
     Stat stat = new Stat();
+    boolean completeSignal = false;
 
     public class Stat{
         int join_cmd=0;
@@ -75,6 +76,7 @@ public class Chord{
             String s;
             while((s = input.readLine())!=null){
 
+                setComplete(false);
                 Command cmd = parseCmd(s);
                 //reset meesage count before execute command
                 messageCount = 0;
@@ -142,8 +144,6 @@ public class Chord{
                             input.close();
                         }
                         if(res_output!=null){
-                            res_output.write("Stat:", 0, 5);
-                            res_output.newLine();
                             s = new String(stat.join_cmd+" "+stat.join_message);
                             res_output.write(s, 0, s.length());
                             res_output.newLine();
@@ -152,20 +152,17 @@ public class Chord{
                             res_output.flush();
                             res_output.close();
                         }
-                        System.exit(0);
+                        return;
                     }
                     default:
                         System.out.println("Please input valid command.");
                         break;
                 }
 
+                while(completeSignal == false) ;
+
                 //After execution, print out the count
                 System.out.println("Message Count = " + messageCount);
-                if(res_output!=null){
-                    String result = new String(""+messageCount);
-                    res_output.write(result, 0, result.length());
-                    res_output.newLine();
-                }
                 //update stat
                 if(cmd.type==CmdType.JOIN){
                     stat.join_cmd ++;
@@ -237,5 +234,9 @@ public class Chord{
 
     public synchronized void incrementCount(){
         messageCount ++;
+    }
+
+    public synchronized void setComplete(boolean b){
+        completeSignal = b;
     }
 }
