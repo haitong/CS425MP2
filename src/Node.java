@@ -278,7 +278,7 @@ public class Node implements Runnable{
 			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
 			addData(moved);
 		}
-		chrod.incrementCount();
+		chord.incrementCount();
 		pre.removeData(index, finger.get(0).node);
 	}
 
