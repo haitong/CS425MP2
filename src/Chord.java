@@ -6,10 +6,48 @@ public class Chord{
     
     TreeMap<Integer, Node> nodeList = new TreeMap<Integer, Node>();
     Map<Integer, Thread> threadList = new HashMap<Integer, Thread>();
+    BufferedReader input = null;
+    BufferedWriter res_output = null;
+    Stat stat = new Stat();
+
+    public class Stat{
+        int join_cmd=0;
+        int join_message=0;
+        int find_cmd=0;
+        int find_message=0;
+    }
 
     int messageCount = 0;
 
+
+    public void setInput(String s){
+        try{
+            input = new BufferedReader(new FileReader(s));
+        }catch(IOException e){
+            System.out.println(e);
+        }
+    }
+
+    public void setOutput(String s){
+        try{
+            res_output = new BufferedWriter(new FileWriter(s));
+        }catch(IOException e){
+            System.out.println(e);
+        }
+    }
+
+
+    public Chord(String input, String output){
+        setInput(input);
+        setOutput(output);
+        this.start();
+    }
+
     public Chord(){
+        this.start();
+    }
+
+    public void start(){
     
         //create a node with id=0
         //TODO: initialize finger table and key-value for node 0
@@ -29,7 +67,8 @@ public class Chord{
         }
 
         //keep reading from terminal, parse command, and execute
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        if(input==null)
+            input = new BufferedReader(new InputStreamReader(System.in));
 
         try{
         
@@ -98,6 +137,22 @@ public class Chord{
                         Node node = getNode(cmd.p);
                         node.find(cmd.k);
                         break;
+                    } case EXIT: {
+                        if(input!=null){
+                            input.close();
+                        }
+                        if(res_output!=null){
+                            res_output.write("Stat:", 0, 5);
+                            res_output.newLine();
+                            s = new String(stat.join_cmd+" "+stat.join_message);
+                            res_output.write(s, 0, s.length());
+                            res_output.newLine();
+                            s = new String(stat.find_cmd+" "+stat.find_message);
+                            res_output.write(s, 0, s.length());
+                            res_output.flush();
+                            res_output.close();
+                        }
+                        System.exit(0);
                     }
                     default:
                         System.out.println("Please input valid command.");
@@ -105,7 +160,20 @@ public class Chord{
                 }
 
                 //After execution, print out the count
-                System.out.println(messageCount);
+                System.out.println("Message Count = " + messageCount);
+                if(res_output!=null){
+                    String result = new String(""+messageCount);
+                    res_output.write(result, 0, result.length());
+                    res_output.newLine();
+                }
+                //update stat
+                if(cmd.type==CmdType.JOIN){
+                    stat.join_cmd ++;
+                    stat.join_message += messageCount;
+                } else if(cmd.type==CmdType.FIND){
+                    stat.find_cmd ++;
+                    stat.find_message += messageCount;
+                }
             }
 
         } catch(IOException e){
@@ -123,7 +191,7 @@ public class Chord{
 
     //command line type
     private enum CmdType{
-        JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID, SHOWFINGER
+        JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID, SHOWFINGER, EXIT
     }
 
     public static void main(String[] args){
@@ -158,7 +226,9 @@ public class Chord{
             cmd.type = CmdType.FIND;
             cmd.p = Integer.parseInt(str[1]);
             cmd.k = Integer.parseInt(str[2]);
-        }else{
+        } else if(str[0].equalsIgnoreCase("exit")){
+            cmd.type = CmdType.EXIT;
+        } else{
             cmd.type = CmdType.INVALID;
             System.out.println("Can't recognize command!");
         }

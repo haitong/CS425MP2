@@ -50,8 +50,14 @@ public class Test{
             i++;
         }
 
+        String cmd = new String("exit");
+        input_file.write(cmd, 0, cmd.length());
+        input_file.newLine();
+
         input_file.flush();
         input_file.close();
+
+        new Chord(input_file_name, res_file_name);
 
     }
 
