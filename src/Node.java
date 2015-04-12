@@ -32,6 +32,7 @@ public class Node implements Runnable{
 	// check if key exists in any of the replicas
 	public int find(int key){
 		chord.incrementCount();
+//		System.out.println("Curent index is " + index);
 		// if it exists in current replica
 		if(data.contains(key)){
 		// The node needs to return the index of current replica, which is 1 message
@@ -47,16 +48,18 @@ public class Node implements Runnable{
 		// query 2-6 fingers
 		boolean success = false;
 		int result = -1;
-		for(int i=1; i < 6; i++){
-			if(withinRangeEe(finger.get(i).node, finger.get(i+1).node, key)){
+		for(int i=0; i < TOTAL_NUM-1; i++){
+			if(finger.get(i).node != finger.get(i+1).node && withinRangeEe(finger.get(i).node, finger.get(i+1).node, key)){
 				success = true;
+//				System.out.println(" Node " + index + " is asking (" + i + ") " + finger.get(i).node + "  " + finger.get(i+1).node);
 				result = chord.getNode(finger.get(i).node).find(key);
+				break;
 			}
 		}
 
 		// If none of the 2-6 fingers success, query the 7th finger
-		if(!success){
-			result = chord.getNode(finger.get(6).node).find(key);
+		if(!success && finger.get(TOTAL_NUM-1).node != index){
+			result = chord.getNode(finger.get(TOTAL_NUM-1).node).find(key);
 		}
 		return result;
 	}
@@ -77,11 +80,13 @@ public class Node implements Runnable{
 
 
 	public void printKey(){
-		System.out.print("Keys in node " + index + ": ");
+//		System.out.print("Keys in node " + index + ": ");
+		System.out.print(index + " ");
 		for(Integer e : data){
-			System.out.print(e + ", ");
+			System.out.print(e + " ");
 		}
-		System.out.println(". Done!");
+		System.out.println("");
+//		System.out.println(". Done!");
 	}
 
 	public synchronized void addData(Set<Integer> d){
