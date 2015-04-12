@@ -35,6 +35,7 @@ public class Node implements Runnable{
 		// if it exists in current replica
 		if(data.contains(key)){
 		// The node needs to return the index of current replica, which is 1 message
+			chord.incrementCount();
 			return index;
 		}
 		// Check if the key should be stored in current node
