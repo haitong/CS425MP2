@@ -61,6 +61,7 @@ public class Node implements Runnable{
 		if(!success && finger.get(TOTAL_NUM-1).node != index){
 			result = chord.getNode(finger.get(TOTAL_NUM-1).node).find(key);
 		}
+		chord.setComplete(true);
 		return result;
 	}
 
@@ -157,6 +158,7 @@ public class Node implements Runnable{
 		int curr = index;
 
 		while(!withinRangeeE(curr,chord.getNode(curr).getSuccessor(), id)){
+			chord.incrementCount();
 			curr = chord.getNode(curr).closestPrecedingFinger(id);
 		}
 		return curr;
@@ -167,6 +169,7 @@ public class Node implements Runnable{
 			System.out.println("finger " + i + " : start=>" + finger.get(i).start 
 			+ ", end=>" + finger.get(i).end + ", node=>" + finger.get(i).node );
 		}
+		chord.setComplete(true);
 	}
 
 	public int closestPrecedingFinger(int id){
@@ -179,6 +182,7 @@ public class Node implements Runnable{
 
 	public void initFingerTable(){
 		finger.get(0).node = chord.getNode(0).findSuccessor(finger.get(0).start);
+		chord.incrementCount();
 		Node successor = chord.getNode(finger.get(0).node);
 		predecessor = successor.getPredecessor();
 		successor.setPredecessor(index);
@@ -207,11 +211,13 @@ public class Node implements Runnable{
 	public void updateFingerTable(int nodeID, int fingerID){
 		if(withinRange(index,finger.get(fingerID).node,nodeID)){
 			finger.get(fingerID).node = nodeID;
+			chord.incrementCount();
 			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
 		}
 	}
 	
 	public void updateFingerTableLeave(int nodeID, int fingerID){
+		chord.incrementCount();
 		if(finger.get(fingerID).node == nodeID){
 			finger.get(fingerID).node = chord.getNode(nodeID).getSuccessor();
 			chord.getNode(predecessor).updateFingerTableLeave(nodeID,fingerID);
@@ -272,6 +278,7 @@ public class Node implements Runnable{
 			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
 			addData(moved);
 		}
+		chrod.incrementCount();
 		pre.removeData(index, finger.get(0).node);
 	}
 
@@ -280,12 +287,16 @@ public class Node implements Runnable{
 		initFingerTable();
 		updateOthers();
 		moveData();
+		chord.setComplete(true);
 	}
 
 
 	public void leave(){
 		updateOthersLeave();
 		chord.getNode(predecessor).addData(data);
+		// data message
+		chord.incrementCount();
+		chord.setComplete(true);
 	}	
 
 
