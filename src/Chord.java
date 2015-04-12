@@ -8,7 +8,14 @@ public class Chord{
     Map<Integer, Thread> threadList = new HashMap<Integer, Thread>();
     BufferedReader input = null;
     BufferedWriter res_output = null;
+    Stat stat = new Stat();
 
+    public class Stat{
+        int join_cmd=0;
+        int join_message=0;
+        int find_cmd=0;
+        int find_message=0;
+    }
 
     int messageCount = 0;
 
@@ -135,6 +142,13 @@ public class Chord{
                             input.close();
                         }
                         if(res_output!=null){
+                            res_output.write("Stat:", 0, 5);
+                            res_output.newLine();
+                            s = new String(stat.join_cmd+" "+stat.join_message);
+                            res_output.write(s, 0, s.length());
+                            res_output.newLine();
+                            s = new String(stat.find_cmd+" "+stat.find_message);
+                            res_output.write(s, 0, s.length());
                             res_output.flush();
                             res_output.close();
                         }
@@ -151,6 +165,14 @@ public class Chord{
                     String result = new String(""+messageCount);
                     res_output.write(result, 0, result.length());
                     res_output.newLine();
+                }
+                //update stat
+                if(cmd.type==CmdType.JOIN){
+                    stat.join_cmd ++;
+                    stat.join_message += messageCount;
+                } else if(cmd.type==CmdType.FIND){
+                    stat.find_cmd ++;
+                    stat.find_message += messageCount;
                 }
             }
 
