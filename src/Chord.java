@@ -144,8 +144,6 @@ public class Chord{
                             input.close();
                         }
                         if(res_output!=null){
-                            res_output.write("Stat:", 0, 5);
-                            res_output.newLine();
                             s = new String(stat.join_cmd+" "+stat.join_message);
                             res_output.write(s, 0, s.length());
                             res_output.newLine();
@@ -154,7 +152,7 @@ public class Chord{
                             res_output.flush();
                             res_output.close();
                         }
-                        System.exit(0);
+                        return;
                     }
                     default:
                         System.out.println("Please input valid command.");
