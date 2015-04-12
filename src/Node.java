@@ -37,11 +37,13 @@ public class Node implements Runnable{
 		if(data.contains(key)){
 		// The node needs to return the index of current replica, which is 1 message
 			chord.incrementCount();
+			chord.setComplete(true);
 			return index;
 		}
 		// Check if the key should be stored in current node
 		if(index == finger.get(0).node || withinRangeEe(index,finger.get(0).node,key)){
 			// key does not exists
+			chord.setComplete(true);
 			return -1;
 		}
 		// Otherwise, need to query other nodes for the key
@@ -287,6 +289,11 @@ public class Node implements Runnable{
 		initFingerTable();
 		updateOthers();
 		moveData();
+		try {
+		    Thread.sleep(4);                 //1000 milliseconds is one second.
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
 		System.out.println("Join complete");
 		chord.setComplete(true);
 	}
@@ -297,6 +304,11 @@ public class Node implements Runnable{
 		chord.getNode(predecessor).addData(data);
 		// data message
 		chord.incrementCount();
+		try {
+		    Thread.sleep(4);                 //1000 milliseconds is one second.
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}
 		chord.setComplete(true);
 	}	
 
