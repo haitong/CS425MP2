@@ -196,7 +196,7 @@ public class Node implements Runnable{
 			}
 			else{
 				int ID = chord.getNode(0).findSuccessor(finger.get(i+1).start);
-				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
+//				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
 				if(withinRangeEe(finger.get(i+1).start, index, ID)){
 					finger.get(i+1).node = ID;
 				}
@@ -209,9 +209,9 @@ public class Node implements Runnable{
 	}
 
 	public void updateFingerTable(int nodeID, int fingerID){
+		chord.incrementCount();
 		if(withinRange(index,finger.get(fingerID).node,nodeID)){
 			finger.get(fingerID).node = nodeID;
-			chord.incrementCount();
 			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
 		}
 	}
@@ -287,6 +287,7 @@ public class Node implements Runnable{
 		initFingerTable();
 		updateOthers();
 		moveData();
+		System.out.println("Join complete");
 		chord.setComplete(true);
 	}
 
