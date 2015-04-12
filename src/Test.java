@@ -72,14 +72,16 @@ public class Test{
     public static void main(String[] args){
 
         try{
+//            for(int i=0; i<Integer.parseInt(args[3]); i++){
                 Test test = new Test(Integer.parseInt(args[0]),
                     Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]));
+//            }
         } catch (IOException e){
             System.out.println(e);
         }
 
-        System.out.println("Done!");
-        System.exit(0);
+//        System.out.println("Done!");
+//        System.exit(0);
     }
 
 }
