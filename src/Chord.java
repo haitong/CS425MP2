@@ -257,7 +257,7 @@ public class Chord{
     }
 
     public int readCount(){
-        synchronized(completeLock){
+        synchronized(countLock){
             return messageCount;
         }
     }
