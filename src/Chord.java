@@ -103,6 +103,9 @@ public class Chord{
                         System.out.println("Please input valid command.");
                         break;
                 }
+
+                //After execution, print out the count
+                System.out.println(messageCount);
             }
 
         } catch(IOException e){
@@ -162,7 +165,7 @@ public class Chord{
         return cmd;
     }
 
-    public void incrementCount(){
+    public synchronized void incrementCount(){
         messageCount ++;
     }
 }
