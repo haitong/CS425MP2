@@ -251,7 +251,6 @@ public class Node implements Runnable{
 			changeID = index + 1 - step;
 			if(changeID < 0) changeID += TOTAL_NODE;
 			nodeID = findPredecessor(changeID);
-			chord.incrementCount();
 			chord.getNode(nodeID).updateFingerTable(index,i);
 			step *=2;
 		}
