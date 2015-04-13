@@ -200,7 +200,6 @@ public class Node implements Runnable{
 				finger.get(i+1).node = finger.get(i).node % TOTAL_NODE;
 			}
 			else{
-				chord.incrementCount();
 				int ID = chord.getNode(0).findSuccessor(finger.get(i+1).start);
 //				System.out.println("successor = " + ID + " for node " + finger.get(i+1).start + ", i = " + i);
 				if(withinRangeEe(finger.get(i+1).start, index, ID)){
