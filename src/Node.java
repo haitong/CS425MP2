@@ -107,9 +107,10 @@ public class Node implements Runnable{
 	}
 
 	public int findSuccessor(int id){
-		int successor = findPredecessor(id);
+		int predecessor = findPredecessor(id);
+		// Node 0 tell the joining node its successor
 		chord.incrementCount();
-		return chord.getNode(successor).getSuccessor();	
+		return chord.getNode(predecessor).getSuccessor();	
 	}
 
 	public int getSuccessor(){
@@ -159,12 +160,16 @@ public class Node implements Runnable{
 		return index;
 		
 		int curr = index;
-
+		int hop = 0;
 		while(!withinRangeeE(curr,chord.getNode(curr).getSuccessor(), id)){
 			chord.incrementCount();
 			curr = chord.getNode(curr).closestPrecedingFinger(id);
+			hop++;
 		}
-		chord.incrementCount();
+		while(hop > 0){
+			chord.incrementCount();
+			hop--;
+		}
 		return curr;
 	}
 
@@ -185,8 +190,8 @@ public class Node implements Runnable{
 	}
 
 	public void initFingerTable(){
-		finger.get(0).node = chord.getNode(0).findSuccessor(finger.get(0).start);
 		chord.incrementCount();
+		finger.get(0).node = chord.getNode(0).findSuccessor(finger.get(0).start);
 		Node successor = chord.getNode(finger.get(0).node);
 		predecessor = successor.getPredecessor();
 		chord.incrementCount();
@@ -214,9 +219,9 @@ public class Node implements Runnable{
 	}
 
 	public void updateFingerTable(int nodeID, int fingerID){
-		chord.incrementCount();
 		if(withinRange(index,finger.get(fingerID).node,nodeID)){
 			finger.get(fingerID).node = nodeID;
+			chord.incrementCount();
 			chord.getNode(predecessor).updateFingerTable(nodeID,fingerID);
 		}
 	}
@@ -244,13 +249,18 @@ public class Node implements Runnable{
 	}
 
 	public void updateOthers(){
-		int step = 1;
+		int step = 2;
 		int nodeID = 0;
 		int changeID = 0;
-		for(int i=0; i < TOTAL_NUM; i++){
+
+		chord.incrementCount();
+		chord.getNode(predecessor).updateFingerTable(index,0);
+
+		for(int i=1; i < TOTAL_NUM; i++){
 			changeID = index + 1 - step;
 			if(changeID < 0) changeID += TOTAL_NODE;
 			nodeID = findPredecessor(changeID);
+			chord.incrementCount();
 			chord.getNode(nodeID).updateFingerTable(index,i);
 			step *=2;
 		}
