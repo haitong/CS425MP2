@@ -309,7 +309,7 @@ public class Node implements Runnable{
 		} catch(InterruptedException ex) {
 		    Thread.currentThread().interrupt();
 		}
-		System.out.println("Join complete");
+//		System.out.println("Join complete");
 		chord.setComplete(true);
 	}
 
