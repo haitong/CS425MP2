@@ -267,6 +267,19 @@ public class Node implements Runnable{
 	}
 
 	public synchronized void removeData(int start, int end){
+		if(end > index){
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,256));
+			SortedSet<Integer> t2 = new TreeSet<Integer>(getData(0,index+1));
+			data.clear();
+			data.addAll(t1);
+			data.addAll(t2);
+		}
+		else{
+			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,index+1));
+			data.clear();
+			data.addAll(t1);
+		}
+/*
 		if(end > start){
 			SortedSet<Integer> t1 = new TreeSet<Integer>(getData(end,256));
 			SortedSet<Integer> t2 = new TreeSet<Integer>(getData(0,start));
@@ -279,24 +292,27 @@ public class Node implements Runnable{
 			data.clear();
 			data.addAll(t1);
 		}
+*/
 	}
 
 	public synchronized void moveData(){
 		Node pre = chord.getNode(predecessor);
-		if(index > finger.get(0).node){
+		Node next = chord.getNode(finger.get(0).node);
+		if(index < (predecessor+1)%256){
 			chord.incrementCount();
-			SortedSet<Integer> moved1 = pre.getData(index, 256);
-			SortedSet<Integer> moved2 = pre.getData(0, finger.get(0).node);
+			SortedSet<Integer> moved1 = next.getData((predecessor+1)%256, 256);
+			SortedSet<Integer> moved2 = next.getData(0, index+1);
 			addData(moved1);
 			addData(moved2);
 		}
 		else{
 			chord.incrementCount();
-			SortedSet<Integer> moved = pre.getData(index, finger.get(0).node);
+			SortedSet<Integer> moved = next.getData((predecessor+1)%256 ,index+1);
 			addData(moved);
 		}
 		chord.incrementCount();
-		pre.removeData(index, finger.get(0).node);
+		next.removeData((predecessor+1)%256,(index+1)%256);
+
 	}
 
 	public void join(){
@@ -316,7 +332,8 @@ public class Node implements Runnable{
 
 	public void leave(){
 		updateOthersLeave();
-		chord.getNode(predecessor).addData(data);
+//		chord.getNode(predecessor).addData(data);
+		chord.getNode(finger.get(0).node).addData(data);
 		// data message
 		chord.incrementCount();
 		try {
