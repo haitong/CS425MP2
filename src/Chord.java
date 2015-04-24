@@ -230,7 +230,7 @@ public class Chord{
  
         System.out.println("Starting Chord...");
  
-        if(args[0]!=null && args[1]!=null){
+        if(args.length==2){
             Chord chord = new Chord(args[1]);
         }else{
             Chord chord = new Chord();
