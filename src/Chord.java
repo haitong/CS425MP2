@@ -8,6 +8,7 @@ public class Chord{
     Map<Integer, Thread> threadList = new HashMap<Integer, Thread>();
     BufferedReader input = null;
     BufferedWriter res_output = null;
+    BufferedWriter redirect_output = null;
     Stat stat = new Stat();
     boolean completeSignal = false;
     Object completeLock = new Object();
@@ -39,10 +40,22 @@ public class Chord{
         }
     }
 
+    private void redirectOutput(String s){
+        try{
+            redirect_output = new BufferedWriter(new FileWriter(s, true));
+        } catch(IOException e){
+            System.out.println(e);
+        }
+    }
 
     public Chord(String input, String output){
         setInput(input);
         setOutput(output);
+        this.start();
+    }
+
+    public Chord(String output){
+        redirectOutput(output);
         this.start();
     }
 
@@ -118,12 +131,12 @@ public class Chord{
                             break;
                         }
                         Node node = getNode(cmd.p);
-                        node.printKey();
+                        node.printKey(redirect_output);
                         break;
                     } case SHOWALL : {
                         //print all node and their keys
                         for(int i : nodeList.keySet()){
-                            getNode(i).printKey();
+                            getNode(i).printKey(redirect_output);
                         }
                         break;
                     } case LEAVE: {
@@ -161,6 +174,9 @@ public class Chord{
                             res_output.newLine();
                             res_output.flush();
                             res_output.close();
+                        }
+                        if(redirect_output!=null){
+                            redirect_output.close();
                         }
                         System.exit(0);
                     }
@@ -209,11 +225,16 @@ public class Chord{
     private enum CmdType{
         JOIN, FIND, LEAVE, SHOW, SHOWALL, INVALID, SHOWFINGER, EXIT
     }
-
+    
     public static void main(String[] args){
-   
+ 
         System.out.println("Starting Chord...");
-        Chord chord = new Chord();
+ 
+        if(args[0]!=null && args[1]!=null){
+            Chord chord = new Chord(args[1]);
+        }else{
+            Chord chord = new Chord();
+        }
     }
 
     public Node getNode(int id){
@@ -227,7 +248,7 @@ public class Chord{
         if(str[0].equalsIgnoreCase("join")){
             cmd.type = CmdType.JOIN;
             cmd.p = Integer.parseInt(str[1]);
-        } else if(str[0].equalsIgnoreCase("show") && str[1].equalsIgnoreCase("all")){
+        } else if(str[0].equalsIgnoreCase("show-all")){
             cmd.type = CmdType.SHOWALL;
         } else if(str[0].equalsIgnoreCase("show") && !str[1].equalsIgnoreCase("all")){
             cmd.type = CmdType.SHOW;
