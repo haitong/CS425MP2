@@ -82,14 +82,22 @@ public class Node implements Runnable{
 	}
 
 
-	public void printKey(){
-//		System.out.print("Keys in node " + index + ": ");
-		System.out.print(index + " ");
-		for(Integer e : data){
-			System.out.print(e + " ");
-		}
-		System.out.println("");
-//		System.out.println(". Done!");
+	public void printKey(BufferedWriter redirect_out){
+        String res = index+" ";
+        for(Integer e : data){
+            res += e + " ";
+        }
+        if(redirect_out==null){
+    		System.out.println(res);
+        }else{
+            try{
+            redirect_out.write(res, 0, res.length());
+            redirect_out.newLine();
+            redirect_out.flush();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
 	}
 
 	public synchronized void addData(Set<Integer> d){
