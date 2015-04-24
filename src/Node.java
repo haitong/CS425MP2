@@ -38,11 +38,14 @@ public class Node implements Runnable{
 		// The node needs to return the index of current replica, which is 1 message
 			chord.incrementCount();
 			chord.setComplete(true);
+			System.out.println("Find key " + key +" in node " + index);
 			return index;
 		}
 		// Check if the key should be stored in current node
-		if(index == finger.get(0).node || withinRangeEe(index,finger.get(0).node,key)){
+//		if(index == finger.get(0).node || withinRangeEe(index,finger.get(0).node,key)){
+		if(withinRangeeE(index,finger.get(0).node,key)){
 			// key does not exists
+			System.out.println("Find key " + key +" in node " + finger.get(0).node);
 			chord.setComplete(true);
 			return -1;
 		}
@@ -51,7 +54,7 @@ public class Node implements Runnable{
 		boolean success = false;
 		int result = -1;
 		for(int i=0; i < TOTAL_NUM-1; i++){
-			if(finger.get(i).node != finger.get(i+1).node && withinRangeEe(finger.get(i).node, finger.get(i+1).node, key)){
+			if(finger.get(i).node != index && finger.get(i).node != finger.get(i+1).node && withinRangeeE(finger.get(i).node, finger.get(i+1).node, key)){
 				success = true;
 //				System.out.println(" Node " + index + " is asking (" + i + ") " + finger.get(i).node + "  " + finger.get(i+1).node);
 				result = chord.getNode(finger.get(i).node).find(key);
@@ -325,7 +328,7 @@ public class Node implements Runnable{
 		} catch(InterruptedException ex) {
 		    Thread.currentThread().interrupt();
 		}
-//		System.out.println("Join complete");
+		System.out.println("Join " + index +" complete");
 		chord.setComplete(true);
 	}
 
